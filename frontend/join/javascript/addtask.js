@@ -16,7 +16,7 @@ let tasks = {
   subtask: [],
   color: [],
   inits: "",
-};
+}; 
 
 /** @type {string} */
 let section;
