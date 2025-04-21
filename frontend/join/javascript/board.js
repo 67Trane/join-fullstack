@@ -37,11 +37,11 @@ function initBoard() {
  * @param {Object} alltask - The task object to update.
  */
 function updateServer(task, alltask) {
-  fetch(BASE_URL + "addTask/" + task, {
+  fetch(BASE_URL + "addTask/" + task + "/", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(alltask),
-  });
+  }); 
 }
 
 /**
@@ -51,9 +51,8 @@ function loadTasks() {
   fetch(BASE_URL + "addTask/")
     .then((response) => response.json())
     .then((result) => {
-      let keys = result && typeof result === "object" ? Object.keys(result) : "";
       let values = result && typeof result === "object" ? Object.values(result) : "";
-      checkTask(keys, values);
+      checkTask(values);
     });
 }
 
@@ -62,35 +61,23 @@ function loadTasks() {
  * @param {string} atasks - The string containing subtasks.
  * @returns {Array<string>} An array of subtasks.
  */
-function separatSubtask(atasks) {
-  if (!atasks == "") {
-    let inputString = atasks;
-    let matches = inputString.match(/'([^']*)'/g).map((s) => s.replace(/'/g, ""));
-    return matches;
-  }
-}
+// function separatSubtask(atasks) {
+//   if (!atasks == "") {
+//     let inputString = atasks;
+//     let matches = inputString.match(/'([^']*)'/g).map((s) => s.replace(/'/g, ""));
+//     return matches;
+//   }
+// }
 
 /**
  * Processes tasks and prepares them for rendering.
  * @param {Array<string>} keys - The task IDs.
  * @param {Array<Object>} values - The task objects.
  */
-function checkTask(keys, values) {
+function checkTask( values) {
   tasks = [];
   for (let i = 0; i < values.length; i++) {
-    if (!values[i].subtask === "" || typeof values[i].subtask === "string") {
-      if (values[i].subtask === "") {
-        values[i].subtask = "''";
-      }
-      let sep = separatSubtask(values[i].subtask);
-      let subtask = renderToObject(sep);
-      tasks.push(values[i]);
-      tasks[i].id = `${keys[i]}`;
-      tasks[i].subtask = subtask;
-    } else {
-      tasks.push(values[i]);
-      tasks[i].id = `${keys[i]}`;
-    }
+    tasks.push(values[i]);
   }
   renderTask();
   getAmountsOfAllSections();

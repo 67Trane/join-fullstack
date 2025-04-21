@@ -21,6 +21,17 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = ['id','title', 'description', 'prio', 'status',  'assignedto', 'date', 'category', 'color', 'inits', 'subtask']
 
+    def update(self, instance, validated_data):
+        subs = validated_data.pop('subtask', None)
+        instance = super().update(instance, validated_data)
+        
+        if subs is not None:
+            instance.subtask.all().delete()
+            for s in subs:
+                SubTask.objects.create(task=instance, **s)
+                
+        return instance
+
     def create(self, data):
         subs = data.pop('subtask', [])
         task = super().create(data)

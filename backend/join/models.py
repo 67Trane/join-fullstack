@@ -33,7 +33,7 @@ class Task(models.Model):
         Contact, blank=True, related_name="assignedto")
     date = models.DateField()
     prio = models.CharField(max_length=200)
-    category = models.CharField(max_length=100)
+    category = models.CharField(max_length=100 , choices=[("Technical Task", "Technical Task"), ("User Story", "User Story")])
     color = models.CharField(max_length=100, blank=True)
     inits = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=50, default="todo")
