@@ -93,7 +93,7 @@ function subtasksHTML(i, task, tasklength, checked, card) {
                           <input type="checkbox" id="cbtest-19-${i}" onclick="parent.subtaskProcesBar('${card.id}', ${i}, ${tasklength}); boardCardSubtaskChecked(${i})" ${checked}/>
                           <label for="cbtest-19-${i}" class="check-box">
                       </div>
-                      <p>${task[i]}</p>
+                      <p>${task}</p>
                   </div>`;
 }
 

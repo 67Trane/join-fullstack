@@ -35,14 +35,12 @@ function getDate() {
  * Retrieves all subtasks from the list.
  */
 function getSubtasks() {
-
   let subtasklist = document.getElementById("subtasklist");
   let subtask = subtasklist.getElementsByTagName("li");
   for (let i = 0; i < subtask.length; i++) {
-    
-    tasks.subtask.push("'" + subtask[i].innerHTML + "'");
+    const key = subtask[i].textContent.trim();
+    tasks.subtask.push({name: key, status: "inwork"})
   }
-
 }
 
 /**

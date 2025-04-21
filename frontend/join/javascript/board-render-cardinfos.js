@@ -49,8 +49,7 @@ function renderEditCardInfos(iframeDocument, card) {
         `;
 
   for (let i = 0; i < Object.values(card.subtask).length; i++) {
-    let keys = Object.keys(card.subtask);
-    subtaskcontainer.innerHTML += iframe.contentWindow.renderAddToSubtaskList(i, keys[i]);
+    subtaskcontainer.innerHTML += iframe.contentWindow.renderAddToSubtaskList(i, card.subtask[i].name);
   }
 }
 
@@ -59,16 +58,34 @@ function renderEditCardInfos(iframeDocument, card) {
  * @param {Object} card - The task object.
  * @param {Document} iframeDocument - The document of the iframe.
  */
+// function getAllSubtasks(card, iframeDocument) {
+//   let task = Object.keys(card.subtask);
+//   let sectionsElement = iframeDocument.getElementById("subtasks");
+//   sectionsElement.parentElement.id = `board-card-content-${card.id}`;
+
+//   let boardCardContent = sectionsElement.parentElement;
+//   if (!task[0] == "") {
+//     for (let i = 0; i < task.length; i++) {
+//       let checked = ifChecked(card, i);
+//       sectionsElement.innerHTML += subtasksHTML(i, task, task.length, checked, card);
+//     }
+//   }
+//   boardCardContent.innerHTML += renderBoardCardButtons(card.id);
+// }
+
 function getAllSubtasks(card, iframeDocument) {
-  let task = Object.keys(card.subtask);
+  console.log(card.subtask)
+  
+
   let sectionsElement = iframeDocument.getElementById("subtasks");
   sectionsElement.parentElement.id = `board-card-content-${card.id}`;
 
   let boardCardContent = sectionsElement.parentElement;
-  if (!task[0] == "") {
-    for (let i = 0; i < task.length; i++) {
+  if (!card.subtask[0].name == "") {
+    for (let i = 0; i < card.subtask.length; i++) {
       let checked = ifChecked(card, i);
-      sectionsElement.innerHTML += subtasksHTML(i, task, task.length, checked, card);
+      
+      sectionsElement.innerHTML += subtasksHTML(i, card.subtask[i].name, card.subtask[i].name.length, checked, card);
     }
   }
   boardCardContent.innerHTML += renderBoardCardButtons(card.id);
@@ -161,6 +178,8 @@ function setSubtasks() {
   if (input.value == "") {
     subtaskIsEmpty();
   } else {
+    debugger
+    console.log("input value ist: ", input.value)
     subtaskcontainer.innerHTML += renderAddToSubtaskList(id, input.value);
     input.value = "";
   }
