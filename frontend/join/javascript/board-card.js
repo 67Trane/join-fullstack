@@ -6,7 +6,7 @@ let BASE_URL = "http://127.0.0.1:8000/api/";
 /**
  * Initializes the board card.
  */
-function initBoardCard() { }
+function initBoardCard() {}
 
 /**
  * Handles the checkbox state change of a subtask in a board card.
@@ -14,7 +14,8 @@ function initBoardCard() { }
  *
  * @param {number} id - The ID of the subtask.
  */
-function boardCardSubtaskChecked(id) {
+function boardCardSubtaskChecked(id) {  
+  
   parent.fillProgressBar();
   let checkboxdiv = document.getElementById(`board-card-${clickedCardId}-${id}`);
   let checkbox = checkboxdiv.querySelector(`#cbtest-19-${id}`);
@@ -22,32 +23,28 @@ function boardCardSubtaskChecked(id) {
   if (checkbox.checked) {
     tasks.forEach((task) => {
       if (task.id == clickedCardId) {
-        let status = Object.values(task.subtask);
-        status[id] = "done";
-
-        // Aktualisiere das Subtask-Objekt im Task
-        Object.keys(task.subtask).forEach((key, index) => {
-          task.subtask[key] = status[index];
-        });
-        updateServer(task.subtask);
-        window.parent.tasks = tasks;
+        if (typeof task.assignedto === "string") {
+          let newassigned = task.assignedto.split(",");
+          task.assignedto = newassigned;
+        }
+        task.subtask[id].status = "done";
+        updateServer(task);
       }
     });
   } else {
     tasks.forEach((task) => {
       if (task.id == clickedCardId) {
-        let status = Object.values(task.subtask);
-        status[id] = "inwork";
-
-        // Aktualisiere das Subtask-Objekt im Task
-        Object.keys(task.subtask).forEach((key, index) => {
-          task.subtask[key] = status[index];
-        });
-        updateServer(task.subtask);
-        window.parent.tasks = tasks;
+        if (typeof task.assignedto === "string") {
+          let newassigned = task.assignedto.split(",");
+          task.assignedto = newassigned;
+        }
+        task.subtask[id].status = "inwork";
+        updateServer(task);
       }
     });
   }
+
+  window.parent.tasks = tasks;
 }
 
 /**
@@ -56,7 +53,7 @@ function boardCardSubtaskChecked(id) {
  * @param {Object} task - The subtask object to update on the server.
  */
 function updateServer(task) {
-  fetch(BASE_URL + "addTask/" + clickedCardId + "/subtask/", {
+  fetch(BASE_URL + "addTask/" + clickedCardId + "/", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task),
@@ -73,7 +70,7 @@ function deleteTask(id) {
   if (index !== -1) {
     tasks.splice(index, 1);
   }
-  deleteFromServer(id)
+  deleteFromServer(id);
   window.parent.tasks = tasks;
 }
 
@@ -83,7 +80,7 @@ function deleteTask(id) {
  * @param {number} id - The ID of the task to delete from the server.
  */
 function deleteFromServer(id) {
-  fetch(BASE_URL + "addTask/" + id, {
-    method: "DELETE"
+  fetch(BASE_URL + "addTask/" + id + "/", {
+    method: "DELETE",
   });
 }

@@ -344,7 +344,6 @@ function updateServer() {
  * Gathers all task information and updates the server.
  */
 function getAllInfos() {
-  debugger
   checkSubtaskIsOnEdit();
   getTitle();
   getDescription();

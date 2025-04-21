@@ -260,6 +260,7 @@ function getInitails(i, allTasks) {
   } else {
     return [];
   }
+  
 }
 
 /**
@@ -302,7 +303,7 @@ function getCheckedSubtasks(task) {
   let count = 0;
   let checked = Object.values(task.subtask);
   for (let z = 0; z < checked.length; z++) {
-    if (checked[z] == "done") {
+    if (checked[z].status == "done") {
       count++;
     }
   }

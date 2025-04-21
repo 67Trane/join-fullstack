@@ -244,7 +244,7 @@ function subtaskChecked(i, alltask) {
   let checked = 0;
   let subtasks = Object.values(alltask.subtask);
   for (let j = 0; j < subtasks.length; j++) {
-    if (subtasks[j] == "done") {
+    if (subtasks[j].status == "done") {
       checked++;
     }
   }
