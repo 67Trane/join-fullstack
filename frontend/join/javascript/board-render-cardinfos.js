@@ -74,9 +74,6 @@ function renderEditCardInfos(iframeDocument, card) {
 // }
 
 function getAllSubtasks(card, iframeDocument) {
-  console.log(card.subtask)
-  
-
   let sectionsElement = iframeDocument.getElementById("subtasks");
   sectionsElement.parentElement.id = `board-card-content-${card.id}`;
 
@@ -178,7 +175,6 @@ function setSubtasks() {
   if (input.value == "") {
     subtaskIsEmpty();
   } else {
-    debugger
     console.log("input value ist: ", input.value)
     subtaskcontainer.innerHTML += renderAddToSubtaskList(id, input.value);
     input.value = "";

@@ -41,7 +41,6 @@ function onload() {
  * Sends task information to the server to save it.
  */
 function postInfos() {
-  console.log("task", tasks)
   fetch(BASE_URL + "addTask/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

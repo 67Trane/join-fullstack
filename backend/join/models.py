@@ -34,7 +34,7 @@ class Task(models.Model):
     date = models.DateField()
     prio = models.CharField(max_length=200)
     category = models.CharField(max_length=100 , choices=[("Technical Task", "Technical Task"), ("User Story", "User Story")])
-    color = models.CharField(max_length=100, blank=True)
+    color = models.JSONField(blank=True, default=list)
     inits = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=50, default="todo")
 

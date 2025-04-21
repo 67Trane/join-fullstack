@@ -32,9 +32,10 @@ function getSubtasks() {
   let subtask = subtasklist.getElementsByTagName("li");
   let newsubtask = {};
   for (let i = 0; i < subtask.length; i++) {
-    newsubtask[subtask[i].innerHTML] = "inwork";
+    newsubtask.name = subtask[i].innerHTML
+    newsubtask.status = "inwork";
   }
-  tasks.subtask = newsubtask;
+  tasks.subtask.push(newsubtask);
 }
 
 /**
