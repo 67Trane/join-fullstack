@@ -4,6 +4,7 @@ from join.models import Task, Contact, User, Status, SubTask
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = SubTask
         fields = ['name', 'status']
