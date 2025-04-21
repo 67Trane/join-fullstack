@@ -15,20 +15,22 @@ function initBoardCard() {}
  * @param {number} id - The ID of the subtask.
  */
 function boardCardSubtaskChecked(id) {  
-  
   parent.fillProgressBar();
   let checkboxdiv = document.getElementById(`board-card-${clickedCardId}-${id}`);
   let checkbox = checkboxdiv.querySelector(`#cbtest-19-${id}`);
 
   if (checkbox.checked) {
     tasks.forEach((task) => {
+      
       if (task.id == clickedCardId) {
         if (typeof task.assignedto === "string") {
           let newassigned = task.assignedto.split(",");
           task.assignedto = newassigned;
         }
         task.subtask[id].status = "done";
+        console.log("testsdsdsd")
         updateServer(task);
+        debugger
       }
     });
   } else {

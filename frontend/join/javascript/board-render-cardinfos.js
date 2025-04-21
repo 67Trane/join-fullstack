@@ -80,9 +80,9 @@ function getAllSubtasks(card, iframeDocument) {
   let boardCardContent = sectionsElement.parentElement;
   if (!card.subtask[0].name == "") {
     for (let i = 0; i < card.subtask.length; i++) {
-      let checked = ifChecked(card, i);
       
-      sectionsElement.innerHTML += subtasksHTML(i, card.subtask[i].name, card.subtask[i].name.length, checked, card);
+      let checked = ifChecked(card, i);
+      sectionsElement.innerHTML += subtasksHTML(i, card.subtask[i].name, card.subtask.length, checked, card);
     }
   }
   boardCardContent.innerHTML += renderBoardCardButtons(card.id);
@@ -96,9 +96,9 @@ function getAllSubtasks(card, iframeDocument) {
  */
 function ifChecked(card, i) {
   let alltasks = Object.values(card.subtask);
-  if (alltasks[i] == "inwork") {
+  if (alltasks[i].status == "inwork") {
     return "";
-  } else if (alltasks[i] == "done") {
+  } else if (alltasks[i].status == "done") {
     return "checked";
   }
 }
