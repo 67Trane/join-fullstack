@@ -32,6 +32,7 @@ function renderContactGroups() {
  */
 function groupContactsByInitials() {
     db.forEach(contact => {
+        console.log("asd", db)
         let initials = getContactInitials(contact.nameIn);
         let letter = initials[1];
         if (!organizedContacts[letter]) {

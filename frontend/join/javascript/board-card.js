@@ -14,23 +14,21 @@ function initBoardCard() {}
  *
  * @param {number} id - The ID of the subtask.
  */
-function boardCardSubtaskChecked(id) {  
+function boardCardSubtaskChecked(id) {
   parent.fillProgressBar();
   let checkboxdiv = document.getElementById(`board-card-${clickedCardId}-${id}`);
   let checkbox = checkboxdiv.querySelector(`#cbtest-19-${id}`);
 
   if (checkbox.checked) {
     tasks.forEach((task) => {
-      
       if (task.id == clickedCardId) {
         if (typeof task.assignedto === "string") {
           let newassigned = task.assignedto.split(",");
           task.assignedto = newassigned;
         }
         task.subtask[id].status = "done";
-        console.log("testsdsdsd")
+        console.log("testsdsdsd");
         updateServer(task);
-        debugger
       }
     });
   } else {
@@ -55,11 +53,15 @@ function boardCardSubtaskChecked(id) {
  * @param {Object} task - The subtask object to update on the server.
  */
 function updateServer(task) {
-  fetch(BASE_URL + "addTask/" + clickedCardId + "/", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(task),
-  });
+  try {
+    fetch(BASE_URL + "addTask/" + clickedCardId + "/", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(task),
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 /**

@@ -10,3 +10,6 @@ __pycache__/
 
 # Sonstiges
 .env
+
+# Auto Start für StreamDeck
+open-backend.bat

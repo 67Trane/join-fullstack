@@ -1,4 +1,6 @@
-let currentUserURL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/curent-user.json"
+// let currentUserURL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/curent-user.json"
+let currentUserURL = "http://127.0.0.1:8000/api/curent-user/"
+
 const params = new URLSearchParams(window.location.search);
 let currentName = '';
 const icon = params.get('icon');
@@ -145,6 +147,7 @@ function getRandomColor() {
  * @returns {Array<string>} An array containing the initials of the first and last name.
  */
 function getContactInitials(name) {
+  console.log(name)
   let namesArray = name.trim().split(' ');
   let lastName = namesArray[namesArray.length - 1];
   let firstName = namesArray[0];

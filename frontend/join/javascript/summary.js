@@ -1,4 +1,4 @@
-let Status = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/Status.json"
+let Status = "http://127.0.0.1:8000/api/Status/"
 let amounts = {};
 
 /**
@@ -28,7 +28,7 @@ async function loadAccounts() {
   await fetch(Status)
     .then((response) => response.json())
     .then((result) => {
-      amounts = result;
+      amounts = result[0];
     })
     .catch((error) => console.log('Error fetching data:', error));
 }
@@ -107,6 +107,6 @@ function setTaskInBoard() {
   let done = amounts.done;
   let progress = amounts.inprogress;
   let feedback = amounts.awaitfeedback;
-  let Tasks = todo + done + progress + feedback;
+  let Tasks = +todo + +done + +progress + +feedback;
   document.getElementById('tasks-in-board-counter').innerHTML = `${Tasks}`;
 }

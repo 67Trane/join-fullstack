@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +13,7 @@
 </head>
 
 <body onload="start()">
-  <div id="join-logo-overlay" class="overlay"> 
+  <div id="join-logo-overlay" class="overlay">
   </div>
   <section id="log-in" class="log-in-section hidden">
     <img id="join-image-id" class="log-in-join-logo" src="./assets/img/join-icon.svg" alt="" />
@@ -21,10 +22,11 @@
       <div class="border-bottom-log-in"></div>
       <form onsubmit="logIn(event)">
         <div class="input-container">
-          <input id="user-email" class="input-field email-input" type="email" placeholder="Email"/>
+          <input id="user-email" class="input-field email-input" type="email" placeholder="Email" />
         </div>
         <div class="input-container">
-          <input id="user-password" class="input-field password-input" type="password" placeholder="Password" onkeyup="changePasswordIcon('user-password','change-password-icons')" />
+          <input id="user-password" class="input-field password-input" type="password" placeholder="Password"
+            onkeyup="changePasswordIcon('user-password','change-password-icons')" />
           <span id="change-password-icons" class="password-eye-open d-none"></span>
         </div>
         <div id="wrong-log-in" class="font-color-red"></div>
@@ -33,11 +35,11 @@
           <label class="label-margin-right" for="checkbox">Remember me</label>
         </div>
         <div class="log-in-button-container">
-        <button class="button log-in-button">Log in</button>
-      
-      <button onclick="logInAsGuest()" class="button guest-log-in">Guest Log in</button>
-    </div>
-    </form>
+          <button class="button log-in-button">Log in</button>
+          <button type="button" onclick="logInAsGuest()" class="button guest-log-in">Guest Log in</button>
+        </div>
+      </form>
+
     </div>
     <div class="log-in-sign-up-container">
       <p>Not a Join user?</p>
@@ -50,4 +52,5 @@
   </section>
   <section id="sign-up" class="log-in-section d-none"></section>
 </body>
+
 </html>

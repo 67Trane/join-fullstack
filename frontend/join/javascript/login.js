@@ -1,6 +1,4 @@
-
-let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/accounts.json" 
-let contacsFatch = 'https://join-318-default-rtdb.europe-west1.firebasedatabase.app/';
+let BASE_URL = "http://127.0.0.1:8000/api/";
 
 /**
  * Starts the login animation by calling `startLogInAnimation`.
@@ -13,11 +11,11 @@ function start() {
  * Initiates the login animation by hiding the overlay after a short delay.
  */
 function startLogInAnimation() {
-  const overlay = document.querySelector('.overlay');
-  const logo = document.querySelector('.log-in-join-logo');
+  const overlay = document.querySelector(".overlay");
+  const logo = document.querySelector(".log-in-join-logo");
   // Set the image to visible and start the animation
   setTimeout(() => {
-    overlay.classList.add('hidden'); // Hide the overlay
+    overlay.classList.add("hidden"); // Hide the overlay
   }, 300); // Delay as needed
 }
 
@@ -28,7 +26,7 @@ function startLogInAnimation() {
 function logIn(event) {
   event.preventDefault();
   accounts = [];
-  loadAccounts();
+  checkUserData();
 }
 
 /**
@@ -37,18 +35,18 @@ function logIn(event) {
  * @param {string} userEmail - The email of the user.
  * @throws {Error} Throws an error if the network request fails.
  */
-async function postCurrentUser(userName, userEmail) {
+async function postCurrentUser(userName, userEmail, token, userid) {
   try {
-    const response = await fetch(currentUserURL, {
+    const response = await fetch(currentUserURL + "1/", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameIn: `${userName}`, emailIn: `${userEmail}`, phoneIn: ''}),
+      body: JSON.stringify({ nameIn: `${userName}`, emailIn: `${userEmail}`, token: `${token}`, user: `${userid}` }),
     });
     if (!response.ok) {
-      throw new Error('Error posting data');
+      throw new Error("Error posting data");
     }
   } catch (error) {
-    console.error('Error posting current user:', error);
+    console.error("Error posting current user:", error);
   }
 }
 
@@ -62,7 +60,7 @@ function loadAccounts() {
       const accounts = Object.values(result);
       checkUserData(accounts);
     })
-    .catch((error) => console.log('Error fetching data:', error));
+    .catch((error) => console.log("Error fetching data:", error));
 }
 
 /**
@@ -70,18 +68,43 @@ function loadAccounts() {
  * Redirects to the summary page if successful, otherwise shows an error.
  * @param {Array} accounts - An array of user account objects.
  */
-async function checkUserData(accounts) {
-  let userEmail = document.getElementById('user-email').value;
-  let userPassword = document.getElementById('user-password').value;
-  let user = accounts.find(a => a.email == userEmail && a.password == userPassword);
-  if (user) {
-    let currentAccountName = user.name;
-    let currentEmail = user.email;
-    await postCurrentUser(currentAccountName, currentEmail);
+async function checkUserData() {
+  let userEmail = document.getElementById("user-email").value;
+  let userPassword = document.getElementById("user-password").value;
+  // let user = accounts.find(a => a.email == userEmail && a.password == userPassword);
+  let currentUser = {};
+
+  try {
+    let user = await fetch(BASE_URL + "login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userEmail,
+        password: userPassword,
+      }),
+    });
+    if (user) {
+      currentUser = await user.json();
+      localStorage.setItem("token", currentUser.token);
+      closeAddContactDialog();
+      initialize();
+    }
+  } catch (error) {
+    console.log("Error pushing data:", error);
+  }
+
+  if (!currentUser.non_field_errors) {
+    let currentAccountName = currentUser.username;
+    let currentEmail = currentUser.email;
+    let currentToken = currentUser.token;
+
+    await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
     window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
   } else {
-    document.getElementById('user-email').classList.add('border-color-red');
-    document.getElementById('user-password').classList.add('border-color-red');
+    document.getElementById("user-email").classList.add("border-color-red");
+    document.getElementById("user-password").classList.add("border-color-red");
     renderWrongLogIn();
   }
 }
@@ -90,7 +113,7 @@ async function checkUserData(accounts) {
  * Renders an error message for incorrect login attempts.
  */
 function renderWrongLogIn() {
-  document.getElementById('wrong-log-in').innerHTML = `
+  document.getElementById("wrong-log-in").innerHTML = `
   Check your email and password. Please try again.`;
 }
 
@@ -103,12 +126,12 @@ function changePasswordIcon(inputID, spanID) {
   let currentInputID = document.getElementById(`${inputID}`);
   let valueLength = currentInputID.value.length;
   let iconBox = document.getElementById(`${spanID}`);
-  iconBox.classList.remove('d-none');
+  iconBox.classList.remove("d-none");
   if (valueLength > 0) {
-    currentInputID.classList.remove('password-input');
+    currentInputID.classList.remove("password-input");
   } else {
-    currentInputID.classList.add('password-input');
-    iconBox.classList.add('d-none');
+    currentInputID.classList.add("password-input");
+    iconBox.classList.add("d-none");
   }
   iconBox.innerHTML = `
     <img onclick="changeInputType('${inputID}', '${spanID}')" src="./assets/img/visibility_off.svg" alt="open-eye">`;
@@ -122,12 +145,12 @@ function changePasswordIcon(inputID, spanID) {
 function changeInputType(inputID, spanID) {
   let currentPasswordInput = document.getElementById(`${inputID}`);
   let iconBox = document.getElementById(`${spanID}`);
-  if (currentPasswordInput.type === 'password') {
-    currentPasswordInput.type = 'text';
+  if (currentPasswordInput.type === "password") {
+    currentPasswordInput.type = "text";
     iconBox.innerHTML = `
     <img onclick="changeInputType('${inputID}', '${spanID}')" src="./assets/img/visibility.svg" alt="close-eye">`;
   } else {
-    currentPasswordInput.type = 'password';
+    currentPasswordInput.type = "password";
     iconBox.innerHTML = `
     <img onclick="changeInputType('${inputID}', '${spanID}')" src="./assets/img/visibility_off.svg" alt="open-eye">`;
   }
@@ -137,8 +160,47 @@ function changeInputType(inputID, spanID) {
  * Logs in as a guest and redirects to the summary page.
  */
 async function logInAsGuest() {
-  await setNoCurrentUser();
-  window.location.href = './documents/summary.html';
+  guestLogin();
+
+  // await setNoCurrentUser();
+  // window.location.href = "./documents/summary.html";
+}
+
+async function guestLogin() {
+  let currentUser = {};
+
+  try {
+    let user = await fetch(BASE_URL + "login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: "guest@guest.de",
+        password: "guestlogin",
+      }),
+    });
+    if (user) {
+      currentUser = await user.json();
+      localStorage.setItem("token", currentUser.token);
+      closeAddContactDialog();
+      initialize();
+    }
+  } catch (error) {
+    console.log("Error pushing data:", error);
+  }
+
+  if (!currentUser.non_field_errors) {
+    let currentAccountName = currentUser.username;
+    let currentEmail = currentUser.email;
+    let currentToken = currentUser.token;
+    await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
+    window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
+  } else {
+    document.getElementById("user-email").classList.add("border-color-red");
+    document.getElementById("user-password").classList.add("border-color-red");
+    renderWrongLogIn();
+  }
 }
 
 /**
@@ -146,21 +208,21 @@ async function logInAsGuest() {
  * @throws {Error} Throws an error if the network request fails.
  */
 async function setNoCurrentUser() {
-  let userName = 'Guest';
+  let userName = "Guest";
   if (userName) {
-    document.getElementById('wrong-log-in').classList.add('d-none');
+    document.getElementById("wrong-log-in").classList.add("d-none");
   }
   try {
-    const response = await fetch(currentUserURL, {
+    const response = await fetch(currentUserURL + "1/", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameIn: `${userName}`}),
+      body: JSON.stringify({ nameIn: `${userName}`, emailIn: "" }),
     });
     if (!response.ok) {
-      throw new Error('Error posting data');
+      throw new Error("Error posting data");
     }
   } catch (error) {
-    console.error('Error posting no current user:', error);
+    console.error("Error posting no current user:", error);
   }
 }
 
@@ -168,8 +230,8 @@ async function setNoCurrentUser() {
  * Loads the sign-up form by hiding the login form and displaying the sign-up form.
  */
 function loadSignUp() {
-  document.getElementById('log-in').classList.add('d-none');
-  document.getElementById('sign-up').classList.remove('d-none');
+  document.getElementById("log-in").classList.add("d-none");
+  document.getElementById("sign-up").classList.remove("d-none");
   renderSignUpHTML();
 }
 
@@ -177,12 +239,12 @@ function loadSignUp() {
  * Checks the validity of the sign-up form and enables or disables the sign-up button accordingly.
  */
 function checkFormValidity() {
-  let name = document.getElementById('new-name').value;
-  let email = document.getElementById('new-email').value;
-  let password = document.getElementById('new-password').value;
-  let confirmPassword = document.getElementById('check-new-password').value;
-  let checkbox = document.getElementById('accept-box').checked;
-  let button = document.getElementById('sign-up-button');
+  let name = document.getElementById("new-name").value;
+  let email = document.getElementById("new-email").value;
+  let password = document.getElementById("new-password").value;
+  let confirmPassword = document.getElementById("check-new-password").value;
+  let checkbox = document.getElementById("accept-box").checked;
+  let button = document.getElementById("sign-up-button");
 
   if (name && email && password && confirmPassword && checkbox) {
     button.disabled = false;
@@ -195,10 +257,10 @@ function checkFormValidity() {
  * Switches the view from the sign-up page back to the login page.
  */
 function BackToLogIn() {
-  document.getElementById('join-image-id').classList.remove('log-in-join-logo');
-  document.getElementById('join-image-id').classList.add('static-logo');
-  document.getElementById('sign-up').classList.add('d-none');
-  document.getElementById('log-in').classList.remove('d-none');
+  document.getElementById("join-image-id").classList.remove("log-in-join-logo");
+  document.getElementById("join-image-id").classList.add("static-logo");
+  document.getElementById("sign-up").classList.add("d-none");
+  document.getElementById("log-in").classList.remove("d-none");
 }
 
 /**
@@ -208,10 +270,10 @@ function BackToLogIn() {
  */
 function addNewUser(event) {
   event.preventDefault();
-  let newName = document.getElementById('new-name').value;
-  let newEmail = document.getElementById('new-email').value;
-  let newPassword = document.getElementById('new-password').value;
-  let checkNewPassword = document.getElementById('check-new-password').value;
+  let newName = document.getElementById("new-name").value;
+  let newEmail = document.getElementById("new-email").value;
+  let newPassword = document.getElementById("new-password").value;
+  let checkNewPassword = document.getElementById("check-new-password").value;
   comparePasswords(newName, newEmail, newPassword, checkNewPassword);
   getInputValues(newName, newEmail, newPassword);
 }
@@ -226,10 +288,10 @@ function getInputValues(contactName, contactEmail, newPassword) {
   inputData = {
     nameIn: contactName,
     emailIn: contactEmail,
-    phoneIn: '',
+    phoneIn: "",
     isUser: true,
     password: newPassword,
-    color: getRandomColor()
+    color: getRandomColor(),
   };
   pushData(inputData);
 }
@@ -241,20 +303,20 @@ function getInputValues(contactName, contactEmail, newPassword) {
  */
 async function pushData(inputData) {
   try {
-    let response = await fetch(contacsFatch + 'contacts.json', {
-      method: 'POST',
+    let response = await fetch(BASE_URL + "contacts/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(inputData)
+      body: JSON.stringify(inputData),
     });
     if (!response.ok) {
-      throw new Error('Error pushing data');
+      throw new Error("Error pushing data");
     }
     closeAddContactDialog();
     initialize();
   } catch (error) {
-    console.log('Error pushing data:', error);
+    console.log("Error pushing data:", error);
   }
 }
 
@@ -279,7 +341,7 @@ function comparePasswords(newName, newEmail, newPassword, checkNewPassword) {
   if (newPassword === checkNewPassword) {
     postNewAccount(newName, newEmail, newPassword);
   } else {
-    document.getElementById('check-new-password').classList.add('border-color-red');
+    document.getElementById("check-new-password").classList.add("border-color-red");
     renderWrongPassword();
   }
 }
@@ -289,7 +351,7 @@ function comparePasswords(newName, newEmail, newPassword, checkNewPassword) {
  */
 function sendToPrivacyPolicy() {
   let noMember = true;
-  window.open(`../join/documents/Privacy.html?userId=${noMember}`, '_blank');
+  window.open(`../join/documents/Privacy.html?userId=${noMember}`, "_blank");
 }
 
 /**
@@ -297,7 +359,7 @@ function sendToPrivacyPolicy() {
  */
 function sendTolegalNotice() {
   let noMember = true;
-  window.open(`../join/documents/legal.html?userId=${noMember}`, '_blank');
+  window.open(`../join/documents/legal.html?userId=${noMember}`, "_blank");
 }
 
 /**
@@ -314,7 +376,7 @@ function postNewAccount(newName, newEmail, newPassword) {
   });
   renderSuccessfully();
   setTimeout(() => {
-    window.location.href = './index.html';
+    window.location.href = "./index.html";
   }, 2000);
 }
 
@@ -322,23 +384,23 @@ function postNewAccount(newName, newEmail, newPassword) {
  * Displays a success message indicating that the user has signed up successfully.
  */
 function renderSuccessfully() {
-  document.getElementById('successfully').classList.remove('d-none');
-  document.getElementById('successfully').classList.add('sign-up-overlay');
-  return document.getElementById('successfully').innerHTML += `
+  document.getElementById("successfully").classList.remove("d-none");
+  document.getElementById("successfully").classList.add("sign-up-overlay");
+  return (document.getElementById("successfully").innerHTML += `
   <div id="sign-up-overlay" class="success-overlay"></div>
   <div class="success-box">You Signed Up successfully</div>
-  `;
+  `);
 }
 
 /**
  * Displays an error message when the passwords do not match.
  */
 function renderWrongPassword() {
-  document.getElementById('wrong-password').innerHTML = `Your passwords don't match. Please try again.`;
+  document.getElementById("wrong-password").innerHTML = `Your passwords don't match. Please try again.`;
 }
 
-function renderSignUpHTML(){
-  return document.getElementById('sign-up').innerHTML = `
+function renderSignUpHTML() {
+  return (document.getElementById("sign-up").innerHTML = `
   <img class="static-logo" src="./assets/img/join-icon.svg" alt="">
   <div class="log-in-container">
     <div class="sign-in-title-container">
@@ -369,5 +431,5 @@ function renderSignUpHTML(){
       <a id="privacy-link" onclick="sendToPrivacyPolicy()" href="#">Privacy Policy</a>
       <a id="legal-link" onclick="sendTolegalNotice()" href="#">Legal notice</a>
     </div>
-    <div id="successfully" class="d-none"></div>`;
+    <div id="successfully" class="d-none"></div>`);
 }

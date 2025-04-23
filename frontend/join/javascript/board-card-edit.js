@@ -231,6 +231,7 @@ function addSubtask() {
         subtaskIsEmpty();
       } else {
         addToSubtask();
+        
       }
     } else {
       searchbar.classList.remove("notfound");

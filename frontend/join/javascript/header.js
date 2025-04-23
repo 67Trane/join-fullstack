@@ -10,7 +10,7 @@ function loadUserName() {
   fetch(currentUserURL)
     .then((response) => response.json())
     .then((result) => {
-      renderUserName(result);
+      renderUserName(result[0]);
     })
     .catch((error) => console.log('Error fetching datas:', error));
 }

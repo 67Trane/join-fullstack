@@ -30,12 +30,10 @@ function getDate() {
 function getSubtasks() {
   let subtasklist = document.getElementById("subtasklist");
   let subtask = subtasklist.getElementsByTagName("li");
-  let newsubtask = {};
   for (let i = 0; i < subtask.length; i++) {
-    newsubtask.name = subtask[i].innerHTML
-    newsubtask.status = "inwork";
+    const key = subtask[i].textContent.trim();
+    tasks.subtask.push({name: key, status: "inwork"})
   }
-  tasks.subtask.push(newsubtask);
 }
 
 /**

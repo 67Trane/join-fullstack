@@ -5,10 +5,16 @@ let baseUrl = "http://127.0.0.1:8000/api/";
 // let baseUrl = 'https://join-318-default-rtdb.europe-west1.firebasedatabase.app/';
 
 async function getData(path) {
+  const token = localStorage.getItem("token");
   try {
-    let response = await fetch(baseUrl + path);
+    let response = await fetch(baseUrl + path, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
+      },
+    });
     let data = await response.json();
-
     if (data) {
       let contactsArray = Object.entries(data).map(([key, value]) => {
         return {
@@ -18,6 +24,23 @@ async function getData(path) {
       });
       db.push(...contactsArray);
     }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+async function getCurrentUser() {
+  const token = localStorage.getItem("token");
+  try {
+    let response = await fetch(baseUrl + "curent-user", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
+      },
+    });
+    let data = await response.json();
+    return data
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -34,8 +57,8 @@ async function initializeContactList() {
   init();
   try {
     db = [];
-    await getData("contacts");
-    await getTasks("addTask");
+    await getData("contacts/");
+    await getTasks("addTask/");
   } finally {
     listContentRef.innerHTML = "";
     renderContactGroups();
@@ -81,12 +104,21 @@ async function initializeContactList() {
  * @param {Object} inputData - The contact data to push into the database.
  * @returns {Promise<void>}
  */
+
 async function pushData(inputData) {
+  let currentUser = getCurrentUser()
+ 
+  console.log("curent", currentUser)
+  const token = localStorage.getItem("token");
+  console.log(userDb)
+  inputData['user'] = [userDb[0].user]
+  console.log("sad", inputData)
   try {
     let response = await fetch(baseUrl + "contacts/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
       },
       body: JSON.stringify(inputData),
     });
