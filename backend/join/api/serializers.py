@@ -68,7 +68,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'title', 'description', 'prio', 'status',
-                  'assignedto', 'date', 'category', 'color', 'inits', 'subtask']
+                  'assignedto', 'date', 'category', 'color', 'inits', 'subtask', 'user']
 
     def update(self, instance, validated_data):
         subs = validated_data.pop('subtask', None)

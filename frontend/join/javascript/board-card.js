@@ -27,7 +27,6 @@ function boardCardSubtaskChecked(id) {
           task.assignedto = newassigned;
         }
         task.subtask[id].status = "done";
-        console.log("testsdsdsd");
         updateServer(task);
       }
     });

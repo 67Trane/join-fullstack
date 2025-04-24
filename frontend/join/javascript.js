@@ -147,7 +147,6 @@ function getRandomColor() {
  * @returns {Array<string>} An array containing the initials of the first and last name.
  */
 function getContactInitials(name) {
-  console.log(name)
   let namesArray = name.trim().split(' ');
   let lastName = namesArray[namesArray.length - 1];
   let firstName = namesArray[0];

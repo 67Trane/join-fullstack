@@ -106,13 +106,8 @@ async function initializeContactList() {
  */
 
 async function pushData(inputData) {
-  let currentUser = getCurrentUser()
- 
-  console.log("curent", currentUser)
   const token = localStorage.getItem("token");
-  console.log(userDb)
   inputData['user'] = [userDb[0].user]
-  console.log("sad", inputData)
   try {
     let response = await fetch(baseUrl + "contacts/", {
       method: "POST",
@@ -209,6 +204,7 @@ async function deleteContact(contactId) {
  * @returns {Promise<boolean>} True if the request was successful, false otherwise.
  */
 async function sendUpdateRequest(contactId, updatedData) {
+  console.log("die id ist: ", contactId)
   try {
     let response = await fetch(baseUrl + `contacts/${contactId}/`, {
       method: "PUT",

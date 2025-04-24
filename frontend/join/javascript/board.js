@@ -37,9 +37,13 @@ function initBoard() {
  * @param {Object} alltask - The task object to update.
  */
 function updateServer(task, alltask) {
+  const token = localStorage.getItem("token");
   fetch(BASE_URL + "addTask/" + task + "/", {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Token ${token}` : "",
+    },
     body: JSON.stringify(alltask),
   }); 
 }
@@ -48,7 +52,14 @@ function updateServer(task, alltask) {
  * Loads tasks from the server and processes them.
  */
 function loadTasks() {
-  fetch(BASE_URL + "addTask/")
+  const token = localStorage.getItem("token");
+  fetch(BASE_URL + "addTask/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Token ${token}` : "",
+    },
+  })
     .then((response) => response.json())
     .then((result) => {
       let values = result && typeof result === "object" ? Object.values(result) : "";

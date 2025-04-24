@@ -17,8 +17,9 @@ class CurrentUser(models.Model):
     token = models.CharField(max_length=200, blank=True)
     nameIn = models.CharField(max_length=100)
     emailIn = models.EmailField(blank=True)
-    phoneIn = models.IntegerField(default= 0, blank= True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    phoneIn = models.IntegerField(default=0, blank=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
 class Contact(models.Model):
@@ -34,19 +35,21 @@ class Contact(models.Model):
     )
 
 
-
 class Task(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    assignedto = models.ManyToManyField(
-        Contact, blank=True, related_name="assignedto")
+    assignedto = models.ManyToManyField(Contact, blank=True, related_name="assignedto")
     date = models.DateField()
     prio = models.CharField(max_length=200)
-    category = models.CharField(max_length=100 , choices=[("Technical Task", "Technical Task"), ("User Story", "User Story")])
+    category = models.CharField(max_length=100, choices=[("Technical Task", "Technical Task"), ("User Story", "User Story")])
     color = models.JSONField(blank=True, default=list)
     inits = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=50, default="todo")
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
+    user = models.ManyToManyField(
+        User,
+        related_name='task_user',
+        blank=True
+    )
 
     def __str__(self):
         return self.title

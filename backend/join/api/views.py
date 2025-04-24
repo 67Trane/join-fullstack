@@ -34,7 +34,6 @@ class RegistrationView(APIView):
 
 
 class CustomLoginView(ObtainAuthToken):
-
     permission_classes = [permissions.AllowAny]
     serializer_class = EmailAuthTokenSerializer
 
@@ -60,11 +59,10 @@ class SubTaskView(viewsets.ModelViewSet):
 
 class TaskView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
-    permission_classes = [permissions.AllowAny]
-    queryset = Task.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
 
-    # def get_queryset(self):
-    #     return Task.objects.filter(user = self.request.user)
+    def get_queryset(self):
+        return Task.objects.filter(user = self.request.user)
 
     @action(detail=True, methods=['get'])
     def subtask(self, request, pk=None):
@@ -81,7 +79,6 @@ class TaskView(viewsets.ModelViewSet):
 
 class ContactsView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    # queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     
     def get_queryset(self):

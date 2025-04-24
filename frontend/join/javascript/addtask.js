@@ -1,6 +1,6 @@
 /** @constant {string} */
 // let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/";
-let BASE_URL = "http://127.0.0.1:8000/api/"
+let BASE_URL = "http://127.0.0.1:8000/api/";
 
 /**
  * Global task object to store task information.
@@ -16,19 +16,22 @@ let tasks = {
   subtask: [],
   color: [],
   inits: "",
-}; 
+  user: [],
+};
 
-
-/** @type {string} */ 
+/** @type {string} */
 let section;
 
 /** @type {Object} */
 let listOfContacts;
 
+let currentUser;
+
 /**
  * Loads initial data and initializes the application.
  */
 function onload() {
+  getCurentUser();
   loadContacts();
   includeHTML();
   dropDown();
@@ -37,36 +40,56 @@ function onload() {
   init();
 }
 
+async function getCurentUser() {
+  let response = await fetch(BASE_URL + "curent-user");
+  res = await response.json();
+  currentUser = res[0];
+}
+
 /**
  * Sends task information to the server to save it.
  */
 function postInfos() {
-  fetch(BASE_URL + "addTask/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      title:       tasks.title,
-      description: tasks.description,
-      assignedto:  tasks.assignedto,  
-      date:        tasks.date,
-      prio:        tasks.prio,
-      category:    tasks.category,
-      subtask:     tasks.subtask,      
-      status:      section,
-      color:       `${tasks.color}`,
-      inits:       tasks.inits,
-    }),
-  });
+  const token = localStorage.getItem("token");
+  tasks.user.push(currentUser.user)
+  try {
+    fetch(BASE_URL + "addTask/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
+      },
+      body: JSON.stringify({
+        title: tasks.title,
+        description: tasks.description,
+        assignedto: tasks.assignedto,
+        date: tasks.date,
+        prio: tasks.prio,
+        category: tasks.category,
+        subtask: tasks.subtask,
+        status: section,
+        color: `${tasks.color}`,
+        inits: tasks.inits,
+        user: tasks.user
+      }),
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
-
-
-
 
 /**
  * Loads contacts from the server and passes them for rendering.
  */
 function loadContacts() {
-  fetch(BASE_URL + "contacts/")
+  const token = localStorage.getItem("token");
+  fetch(BASE_URL + "contacts/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Token ${token}` : "",
+    },
+  })
     .then((response) => response.json())
     .then((result) => renderContacts(result))
     .catch((error) => console.log(error));

@@ -85,27 +85,27 @@ async function checkUserData() {
         password: userPassword,
       }),
     });
-    if (user) {
+    if (user.status == 200) {
+      let currentAccountName = currentUser.username;
+      let currentEmail = currentUser.email;
+      let currentToken = currentUser.token;
       currentUser = await user.json();
+
+      await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
+      window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
       localStorage.setItem("token", currentUser.token);
+
+      
       closeAddContactDialog();
       initialize();
+    } else {
+      document.getElementById("user-email").classList.add("border-color-red");
+      document.getElementById("user-password").classList.add("border-color-red");
+      renderWrongLogIn();
+      return;
     }
   } catch (error) {
     console.log("Error pushing data:", error);
-  }
-
-  if (!currentUser.non_field_errors) {
-    let currentAccountName = currentUser.username;
-    let currentEmail = currentUser.email;
-    let currentToken = currentUser.token;
-
-    await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
-    window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
-  } else {
-    document.getElementById("user-email").classList.add("border-color-red");
-    document.getElementById("user-password").classList.add("border-color-red");
-    renderWrongLogIn();
   }
 }
 

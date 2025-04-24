@@ -175,7 +175,6 @@ function setSubtasks() {
   if (input.value == "") {
     subtaskIsEmpty();
   } else {
-    console.log("input value ist: ", input.value)
     subtaskcontainer.innerHTML += renderAddToSubtaskList(id, input.value);
     input.value = "";
   }
