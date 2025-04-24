@@ -10,6 +10,7 @@ let amounts = {};
  */
 async function loadSummary() {
   await loadTasks();
+  await loadAccounts()
   setToDoNumbers();
   setDoneNumbers();
   setUrgent();

@@ -86,16 +86,16 @@ async function checkUserData() {
       }),
     });
     if (user.status == 200) {
+      currentUser = await user.json();
       let currentAccountName = currentUser.username;
       let currentEmail = currentUser.email;
       let currentToken = currentUser.token;
-      currentUser = await user.json();
+      
 
       await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
       window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
       localStorage.setItem("token", currentUser.token);
 
-      
       closeAddContactDialog();
       initialize();
     } else {

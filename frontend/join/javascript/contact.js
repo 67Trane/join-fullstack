@@ -290,6 +290,7 @@ function openEditContactDialog(id) {
  * @param {Object} contact - The contact object.
  */
 function showEditContactDialog(contact) {
+    console.log("ahasdsa ", contact)
   editContactRef.classList.remove("d-none");
   isCurrentUser = contact.isUser;
   const color = contact.color;

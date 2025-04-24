@@ -40,7 +40,7 @@ async function getCurrentUser() {
       },
     });
     let data = await response.json();
-    return data
+    return data;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -107,7 +107,7 @@ async function initializeContactList() {
 
 async function pushData(inputData) {
   const token = localStorage.getItem("token");
-  inputData['user'] = [userDb[0].user]
+  inputData["user"] = [userDb[0].user];
   try {
     let response = await fetch(baseUrl + "contacts/", {
       method: "POST",
@@ -180,9 +180,14 @@ function showSuccessPopup() {
  * @returns {Promise<void>}
  */
 async function deleteContact(contactId) {
+  const token = localStorage.getItem("token");
   try {
     let response = await fetch(baseUrl + `contacts/${contactId}/`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
+      },
     });
     if (!response.ok) {
       throw new Error("Error deleting contact");
@@ -204,12 +209,14 @@ async function deleteContact(contactId) {
  * @returns {Promise<boolean>} True if the request was successful, false otherwise.
  */
 async function sendUpdateRequest(contactId, updatedData) {
-  console.log("die id ist: ", contactId)
+  const token = localStorage.getItem("token");
+  console.log("die id ist: ", contactId);
   try {
     let response = await fetch(baseUrl + `contacts/${contactId}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
       },
       body: JSON.stringify(updatedData),
     });
@@ -232,11 +239,13 @@ async function sendUpdateRequest(contactId, updatedData) {
  * @returns {Promise<boolean>} True if the request was successful, false otherwise.
  */
 async function sendUpdateTaskRequest(contactId, updatedData) {
+  const token = localStorage.getItem("token");
   try {
     let response = await fetch(baseUrl + `addTask/${contactId}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token ? `Token ${token}` : "",
       },
       body: JSON.stringify(updatedData),
     });
