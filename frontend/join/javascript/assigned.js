@@ -4,6 +4,7 @@
 
 let taskDb = [];
 let currentTaskId;
+const TOKEN = localStorage.getItem("token");
 
 /**
  * Fetches tasks from the Firebase database and populates the `taskDb` array.
@@ -15,13 +16,13 @@ let currentTaskId;
  */
 async function getTasks(path) {
   let taskArray = [];
-  const token = localStorage.getItem("token");
+  
   try {
     let response = await fetch(baseUrl + path, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
     });
     let data = await response.json();

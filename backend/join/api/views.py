@@ -25,12 +25,11 @@ class RegistrationView(APIView):
                 'token': token.key,
                 'username': saved_account.username,
                 'email': saved_account.email,
-                
+                'user': saved_account.id,
             }
-        else:
-            data = serializer.errors
+            return Response(data, status=status.HTTP_201_CREATED)
 
-        return Response(data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomLoginView(ObtainAuthToken):
@@ -62,7 +61,7 @@ class TaskView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Task.objects.filter(user = self.request.user)
+        return Task.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['get'])
     def subtask(self, request, pk=None):
@@ -80,9 +79,9 @@ class TaskView(viewsets.ModelViewSet):
 class ContactsView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ContactSerializer
-    
+
     def get_queryset(self):
-        return Contact.objects.filter(user = self.request.user)
+        return Contact.objects.filter(user=self.request.user)
 
 
 class CurrentUserView(viewsets.ModelViewSet):

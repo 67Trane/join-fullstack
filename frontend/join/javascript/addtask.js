@@ -1,6 +1,7 @@
 /** @constant {string} */
 // let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/";
 let BASE_URL = "http://127.0.0.1:8000/api/";
+const TOKEN = localStorage.getItem("token");
 
 /**
  * Global task object to store task information.
@@ -50,14 +51,13 @@ async function getCurentUser() {
  * Sends task information to the server to save it.
  */
 function postInfos() {
-  const token = localStorage.getItem("token");
   tasks.user.push(currentUser.user)
   try {
     fetch(BASE_URL + "addTask/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
       body: JSON.stringify({
         title: tasks.title,
@@ -82,12 +82,12 @@ function postInfos() {
  * Loads contacts from the server and passes them for rendering.
  */
 function loadContacts() {
-  const token = localStorage.getItem("token");
+  
   fetch(BASE_URL + "contacts/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Token ${token}` : "",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
     },
   })
     .then((response) => response.json())

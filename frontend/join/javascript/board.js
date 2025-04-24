@@ -3,6 +3,7 @@
 /** @constant {string} */
 // let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/";
 let BASE_URL = "http://127.0.0.1:8000/api/"
+const TOKEN = localStorage.getItem("token");
 
 /**
  * Array of all tasks.
@@ -37,12 +38,11 @@ function initBoard() {
  * @param {Object} alltask - The task object to update.
  */
 function updateServer(task, alltask) {
-  const token = localStorage.getItem("token");
   fetch(BASE_URL + "addTask/" + task + "/", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Token ${token}` : "",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
     },
     body: JSON.stringify(alltask),
   }); 
@@ -52,12 +52,12 @@ function updateServer(task, alltask) {
  * Loads tasks from the server and processes them.
  */
 function loadTasks() {
-  const token = localStorage.getItem("token");
+  
   fetch(BASE_URL + "addTask/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Token ${token}` : "",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
     },
   })
     .then((response) => response.json())

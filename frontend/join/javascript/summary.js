@@ -21,12 +21,12 @@ async function loadSummary() {
 }
 
 async function loadTasks() {
-  const token = localStorage.getItem("token");
+
   await fetch(BASE_URL + "addTask/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Token ${token}` : "",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
     },
   })
     .then((response) => response.json())

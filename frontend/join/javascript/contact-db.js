@@ -5,13 +5,12 @@ let baseUrl = "http://127.0.0.1:8000/api/";
 // let baseUrl = 'https://join-318-default-rtdb.europe-west1.firebasedatabase.app/';
 
 async function getData(path) {
-  const token = localStorage.getItem("token");
   try {
     let response = await fetch(baseUrl + path, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
     });
     let data = await response.json();
@@ -30,13 +29,12 @@ async function getData(path) {
 }
 
 async function getCurrentUser() {
-  const token = localStorage.getItem("token");
   try {
     let response = await fetch(baseUrl + "curent-user", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
     });
     let data = await response.json();
@@ -106,14 +104,13 @@ async function initializeContactList() {
  */
 
 async function pushData(inputData) {
-  const token = localStorage.getItem("token");
   inputData["user"] = [userDb[0].user];
   try {
     let response = await fetch(baseUrl + "contacts/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
       body: JSON.stringify(inputData),
     });
@@ -180,13 +177,12 @@ function showSuccessPopup() {
  * @returns {Promise<void>}
  */
 async function deleteContact(contactId) {
-  const token = localStorage.getItem("token");
   try {
     let response = await fetch(baseUrl + `contacts/${contactId}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
     });
     if (!response.ok) {
@@ -209,14 +205,12 @@ async function deleteContact(contactId) {
  * @returns {Promise<boolean>} True if the request was successful, false otherwise.
  */
 async function sendUpdateRequest(contactId, updatedData) {
-  const token = localStorage.getItem("token");
-  console.log("die id ist: ", contactId);
   try {
     let response = await fetch(baseUrl + `contacts/${contactId}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
       body: JSON.stringify(updatedData),
     });
@@ -239,13 +233,13 @@ async function sendUpdateRequest(contactId, updatedData) {
  * @returns {Promise<boolean>} True if the request was successful, false otherwise.
  */
 async function sendUpdateTaskRequest(contactId, updatedData) {
-  const token = localStorage.getItem("token");
+ 
   try {
     let response = await fetch(baseUrl + `addTask/${contactId}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ? `Token ${token}` : "",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
       },
       body: JSON.stringify(updatedData),
     });

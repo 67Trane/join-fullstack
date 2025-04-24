@@ -2,6 +2,7 @@ let tasks = window.parent.tasks;
 let clickedCardId = window.parent.clickedCardId;
 // let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/";
 let BASE_URL = "http://127.0.0.1:8000/api/";
+const TOKEN = localStorage.getItem("token");
 
 /**
  * Initializes the board card.
@@ -55,7 +56,10 @@ function updateServer(task) {
   try {
     fetch(BASE_URL + "addTask/" + clickedCardId + "/", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: TOKEN ? `Token ${TOKEN}` : "",
+      },
       body: JSON.stringify(task),
     });
   } catch (error) {
@@ -85,5 +89,9 @@ function deleteTask(id) {
 function deleteFromServer(id) {
   fetch(BASE_URL + "addTask/" + id + "/", {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
+    },
   });
 }

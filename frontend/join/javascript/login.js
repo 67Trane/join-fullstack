@@ -1,10 +1,36 @@
 let BASE_URL = "http://127.0.0.1:8000/api/";
+// let BASE_URL = "https://join-318-default-rtdb.europe-west1.firebasedatabase.app/accounts.json"
+let currentUser = {};
+const TOKEN = localStorage.getItem("token");
 
 /**
  * Starts the login animation by calling `startLogInAnimation`.
  */
 function start() {
   startLogInAnimation();
+  let remember = localStorage.getItem("remember-me");
+  let checkbox = document.getElementById("remember-me-box");
+
+  if (remember == "checked") {
+    checkbox.checked = true;
+  } else {
+    checkbox.checked = false;
+    deleteToken();
+  }
+}
+
+function checkRememberMe() {
+  let checkbox = document.getElementById("remember-me-box");
+
+  if (checkbox.checked) {
+    localStorage.setItem("remember-me", "checked");
+  } else {
+    localStorage.setItem("remember-me", "not-checked");
+  }
+}
+
+function deleteToken() {
+  localStorage.removeItem("token");
 }
 
 /**
@@ -53,15 +79,15 @@ async function postCurrentUser(userName, userEmail, token, userid) {
 /**
  * Loads user accounts from the server and checks user data.
  */
-function loadAccounts() {
-  fetch(BASE_URL)
-    .then((response) => response.json())
-    .then((result) => {
-      const accounts = Object.values(result);
-      checkUserData(accounts);
-    })
-    .catch((error) => console.log("Error fetching data:", error));
-}
+// function loadAccounts() {
+//   fetch(BASE_URL)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       const accounts = Object.values(result);
+//       checkUserData(accounts);
+//     })
+//     .catch((error) => console.log("Error fetching data:", error));
+// }
 
 /**
  * Checks the user data against the provided accounts and logs in the user if valid.
@@ -72,7 +98,6 @@ async function checkUserData() {
   let userEmail = document.getElementById("user-email").value;
   let userPassword = document.getElementById("user-password").value;
   // let user = accounts.find(a => a.email == userEmail && a.password == userPassword);
-  let currentUser = {};
 
   try {
     let user = await fetch(BASE_URL + "login/", {
@@ -90,7 +115,6 @@ async function checkUserData() {
       let currentAccountName = currentUser.username;
       let currentEmail = currentUser.email;
       let currentToken = currentUser.token;
-      
 
       await postCurrentUser(currentAccountName, currentEmail, currentToken, currentUser.user);
       window.location.href = `./documents/summary.html?name=${encodeURIComponent(currentAccountName)}`;
@@ -274,8 +298,9 @@ function addNewUser(event) {
   let newEmail = document.getElementById("new-email").value;
   let newPassword = document.getElementById("new-password").value;
   let checkNewPassword = document.getElementById("check-new-password").value;
-  comparePasswords(newName, newEmail, newPassword, checkNewPassword);
-  getInputValues(newName, newEmail, newPassword);
+  
+  getInputValues(newName, newEmail, newPassword, checkNewPassword);
+
 }
 
 /**
@@ -284,14 +309,12 @@ function addNewUser(event) {
  * @param {string} contactEmail - The email of the new contact.
  * @param {string} newPassword - The password of the new contact.
  */
-function getInputValues(contactName, contactEmail, newPassword) {
+function getInputValues(contactName, contactEmail, newPassword, repeated_password) {
   inputData = {
-    nameIn: contactName,
-    emailIn: contactEmail,
-    phoneIn: "",
-    isUser: true,
+    username: contactName,
+    email: contactEmail,
     password: newPassword,
-    color: getRandomColor(),
+    repeated_password: repeated_password,
   };
   pushData(inputData);
 }
@@ -303,17 +326,18 @@ function getInputValues(contactName, contactEmail, newPassword) {
  */
 async function pushData(inputData) {
   try {
-    let response = await fetch(BASE_URL + "contacts/", {
+    let response = await fetch(BASE_URL + "registration/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(inputData),
     });
+    currentUser = await response.json();
     if (!response.ok) {
       throw new Error("Error pushing data");
     }
-    closeAddContactDialog();
+    postNewAccount(currentUser.username, currentUser.email);
     initialize();
   } catch (error) {
     console.log("Error pushing data:", error);
@@ -368,11 +392,24 @@ function sendTolegalNotice() {
  * @param {string} newEmail - The email of the new account.
  * @param {string} newPassword - The password of the new account.
  */
-function postNewAccount(newName, newEmail, newPassword) {
-  fetch(BASE_URL, {
+async function postNewAccount(newName, newEmail) {
+  console.log(currentUser.token);
+  debugger;
+  await fetch(BASE_URL + "contacts/", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: `${newName}`, email: `${newEmail}`, password: `${newPassword}` }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: currentUser.token ? `Token ${currentUser.token}` : "",
+    },
+
+    body: JSON.stringify({
+      nameIn: `${newName}`,
+      emailIn: `${newEmail}`,
+      phoneIn: "0",
+      isUser: true,
+      color: "blue",
+      user: [+currentUser.user],
+    }),
   });
   renderSuccessfully();
   setTimeout(() => {

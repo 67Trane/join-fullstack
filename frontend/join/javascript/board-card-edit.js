@@ -14,6 +14,8 @@ let tasks = {
   inits: "",
 };
 
+const TOKEN = localStorage.getItem("token");
+
 /**
  * Initializes the page by loading contacts and setting up the dropdown.
  */
@@ -30,7 +32,13 @@ let BASE_URL = "http://127.0.0.1:8000/api/";
  * Loads contacts from the server and renders them.
  */
 async function loadContacts() {
-  await fetch(BASE_URL + "contacts/")
+  await fetch(BASE_URL + "contacts/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
+    },
+  })
     .then((response) => response.json())
     .then((result) => renderContacts(result))
     .catch((error) => console.log(error));
@@ -231,7 +239,6 @@ function addSubtask() {
         subtaskIsEmpty();
       } else {
         addToSubtask();
-        
       }
     } else {
       searchbar.classList.remove("notfound");
@@ -336,7 +343,10 @@ function updateServer() {
   tasks.id = cardId;
   fetch(BASE_URL + "addTask/" + cardId + "/", {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: TOKEN ? `Token ${TOKEN}` : "",
+    },
     body: JSON.stringify(tasks),
   });
 }
